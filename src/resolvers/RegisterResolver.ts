@@ -1,45 +1,42 @@
 import bcrypt from "bcryptjs";
-import { Arg, Field, InputType, Mutation, Resolver } from "type-graphql";
+import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { getConnection } from "typeorm";
 import { User } from "../entities/User";
+import { RegisterInput } from "./resolverInputs/RegisterInput";
 
-@InputType()
-class RegisterInput {
-    @Field()
-    firstName: string;
-
-    @Field()
-    lastName: string;
-
-    @Field()
-    email: string;
-
-    @Field()
-    password: string;
-}
-
-@Resolver()
+@Resolver(User)
 export class RegisterResolver {
+    /**
+     * We are now doing this directly on the class.
+     *
+     * It is recommended that if the resolver is simple it's
+     * best to do it within the class.
+     */
+    // @FieldResolver()
+    // name(@Root() parent: User) {
+    //     return `${parent.firstName} ${parent.lastName}`;
+    // }
+
+    @Query(() => [User])
+    async users() {
+        return await getConnection().getRepository(User).find();
+    }
+
     @Mutation(() => User)
-    async register(@Arg("registerInputOptions") registerInput: RegisterInput) {
-        // const { firstName, lastName, email, password } = input;
-
-        const hashedPass = await bcrypt.hash(registerInput.password, 12);
-
-        let savedUser: User;
+    async register(@Arg("registerInputOptions") input: RegisterInput) {
+        const hashedPass = await bcrypt.hash(input.password, 12);
 
         try {
-            savedUser = await getConnection()
+            const savedUser = await getConnection()
                 .getRepository(User)
-                .create({ ...registerInput, password: hashedPass })
+                .create({ ...input, password: hashedPass })
                 .save();
 
             return savedUser;
         } catch (error) {
-            console.log(
-                "user ========================================================>",
-                error
-            );
+            console.error(error);
+
+            return;
         }
     }
 }

@@ -3,8 +3,9 @@ import express from "express";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
-import { RegisterResolver } from "./resolvers/RegisterResolver";
 import { HelloResolver } from "./resolvers/HelloResolver";
+import { RegisterResolver } from "./resolvers/RegisterResolver";
+import { formatArgumentValidationError } from "./utils/formatArgumentValidationError";
 
 (async () => {
     await createConnection().catch((e) => console.log(e));
@@ -12,7 +13,8 @@ import { HelloResolver } from "./resolvers/HelloResolver";
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
             resolvers: [HelloResolver, RegisterResolver]
-        })
+        }),
+        formatError: (error) => formatArgumentValidationError(error)
     });
 
     const app = express();
