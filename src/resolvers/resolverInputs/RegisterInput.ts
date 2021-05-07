@@ -1,10 +1,9 @@
 import { IsEmail, Length } from "class-validator";
 import { Field, InputType } from "type-graphql";
-import { User } from "../../entities/User";
 import { IsEmailAlreadyExist } from "../decorators/isEmailAlreadyExists";
 
 @InputType()
-export class RegisterInput extends User {
+export class RegisterInput {
     @Field()
     @Length(2, 15)
     firstName: string;
