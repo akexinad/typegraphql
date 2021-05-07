@@ -5,6 +5,7 @@ import {
     ValidatorConstraintInterface
 } from "class-validator";
 import { User } from "../../entities/User";
+import { RegisterInput } from "../resolverInputs/RegisterInput";
 
 @ValidatorConstraint({ async: true })
 class IsEmailAlreadyExistConstraint implements ValidatorConstraintInterface {
@@ -20,7 +21,7 @@ class IsEmailAlreadyExistConstraint implements ValidatorConstraintInterface {
 }
 
 export const IsEmailAlreadyExist = (validationOptions?: ValidationOptions) => {
-    return (object: User, propertyName: string) => {
+    return (object: RegisterInput, propertyName: string) => {
         registerDecorator({
             target: object.constructor,
             propertyName,
