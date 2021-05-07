@@ -1,8 +1,10 @@
 import { IsEmail, Length } from "class-validator";
 import { Field, InputType } from "type-graphql";
+import { User } from "../../entities/User";
+import { IsEmailAlreadyExist } from "../decorators/isEmailAlreadyExists";
 
 @InputType()
-export class RegisterInput {
+export class RegisterInput extends User {
     @Field()
     @Length(2, 15)
     firstName: string;
@@ -12,7 +14,8 @@ export class RegisterInput {
     lastName: string;
 
     @Field()
-    @IsEmail({}, { message: "this is a shit email" })
+    @IsEmail()
+    @IsEmailAlreadyExist({ message: "This email is already in use" })
     email: string;
 
     @Field()
