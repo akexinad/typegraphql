@@ -6,7 +6,7 @@ import { LoginInput } from "./resolverInputs/LoginInput";
 
 @Resolver()
 export class LoginResolver {
-    @Mutation(() => String, { nullable: true })
+    @Mutation(() => User, { nullable: true })
     async login(
         @Arg("loginInputOptions") input: LoginInput,
         @Ctx() ctx: MyCtx
@@ -21,8 +21,12 @@ export class LoginResolver {
 
         const valid = await bcrypt.compare(password, user.password);
 
+        ctx.req.session.userId = user.id;
+
         if (!valid) {
             return null;
         }
+
+        return user;
     }
 }
