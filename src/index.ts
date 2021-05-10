@@ -2,7 +2,6 @@ import { ApolloServer } from "apollo-server-express";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import expressJwt from "express-jwt";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
@@ -10,7 +9,6 @@ import { HelloResolver } from "./resolvers/HelloResolver";
 import { LoginResolver } from "./resolvers/LoginResolver";
 import { RegisterResolver } from "./resolvers/RegisterResolver";
 import { formatArgumentValidationError } from "./utils/formatArgumentValidationError";
-import { JWT_SECRET } from "./utils/keys/jwtSecret";
 
 (async () => {
     dotenv.config();
@@ -35,14 +33,6 @@ import { JWT_SECRET } from "./utils/keys/jwtSecret";
     });
 
     const app = express();
-
-    app.use(
-        expressJwt({
-            secret: JWT_SECRET,
-            algorithms: ["HS256"],
-            credentialsRequired: false
-        })
-    );
 
     app.use(
         cors({

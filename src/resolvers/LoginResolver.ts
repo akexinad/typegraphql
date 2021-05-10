@@ -1,9 +1,7 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { MyCtx } from "src/types";
 import { Arg, Ctx, Mutation, Resolver } from "type-graphql";
 import { User } from "../entities/User";
-import { JWT_SECRET } from "../utils/keys/jwtSecret";
 import { LoginInput } from "./resolverInputs/LoginInput";
 
 @Resolver()
@@ -26,20 +24,5 @@ export class LoginResolver {
         if (!valid) {
             return null;
         }
-
-        const token = jwt.sign(
-            {
-                ...user
-            },
-            JWT_SECRET,
-            {
-                algorithm: "HS256",
-                expiresIn: "4h"
-            }
-        );
-
-        ctx.res.setHeader("authorization", `Bearer ${token}`);
-
-        return token;
     }
 }
