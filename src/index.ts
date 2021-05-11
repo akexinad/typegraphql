@@ -33,7 +33,10 @@ import { formatArgumentValidationError } from "./utils/formatArgumentValidationE
                 RegisterResolver,
                 LoginResolver,
                 MeResolver
-            ]
+            ],
+            authChecker: ({ context }) => {
+                return !!context.req.session.userId;
+            }
         }),
         context: ({ req, res }) => {
             return { req, res };
