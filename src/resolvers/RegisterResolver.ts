@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { getConnection } from "typeorm";
 import { User } from "../entities/User";
+import { createConfirmationEmail } from "../utils/createConfirmationUrl";
+import { sendEmail } from "../utils/sendEmail";
 import { RegisterInput } from "./resolverInputs/RegisterInput";
 
 @Resolver(User)
@@ -31,6 +33,11 @@ export class RegisterResolver {
                 .getRepository(User)
                 .create({ ...input, password: hashedPass })
                 .save();
+
+            await sendEmail(
+                savedUser.email,
+                await createConfirmationEmail(savedUser.id.toString())
+            );
 
             return savedUser;
         } catch (error) {
