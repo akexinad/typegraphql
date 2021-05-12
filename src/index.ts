@@ -8,11 +8,6 @@ import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
 import { redis } from "./redis";
-import { ConfirmUserResolver } from "./resolvers/ConfirmUserResolver";
-import { HelloResolver } from "./resolvers/HelloResolver";
-import { LoginResolver } from "./resolvers/LoginResolver";
-import { MeResolver } from "./resolvers/Me";
-import { RegisterResolver } from "./resolvers/RegisterResolver";
 import { formatArgumentValidationError } from "./utils/formatArgumentValidationError";
 
 (async () => {
@@ -29,13 +24,7 @@ import { formatArgumentValidationError } from "./utils/formatArgumentValidationE
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [
-                HelloResolver,
-                RegisterResolver,
-                LoginResolver,
-                MeResolver,
-                ConfirmUserResolver
-            ],
+            resolvers: [__dirname + "/resolvers/*.ts"],
             authChecker: ({ context }) => {
                 return !!context.req.session.userId;
             }

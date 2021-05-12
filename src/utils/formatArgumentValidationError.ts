@@ -3,8 +3,6 @@ import { GraphQLError, GraphQLFormattedError } from "graphql";
 export const formatArgumentValidationError = (
     error: GraphQLError
 ): GraphQLFormattedError => {
-    console.log(`error ================================>`, error);
-
     if (error && error.extensions) {
         error.extensions.code = "GRAPHQL_VALIDATION_FAILED";
     }
