@@ -1,4 +1,11 @@
 import { graphql, GraphQLSchema } from "graphql";
+import { ChangePasswordResolver } from "../resolvers/ChangePassword";
+import { ConfirmUserResolver } from "../resolvers/ConfirmUser";
+import { ForgotPasswordResolver } from "../resolvers/ForgotPassword";
+import { LoginResolver } from "../resolvers/Login";
+import { LogoutResolver } from "../resolvers/Logout";
+import { MeResolver } from "../resolvers/Me";
+import { RegisterResolver } from "../resolvers/Register";
 import { buildSchema, Maybe } from "type-graphql";
 
 type Options = {
@@ -16,7 +23,15 @@ let schema: GraphQLSchema;
 export const graphQLCall = async ({ source, variableValues }: Options) => {
     if (!schema) {
         schema = await buildSchema({
-            resolvers: [__dirname + "/../resolvers/*.ts"],
+            resolvers: [
+                ChangePasswordResolver,
+                ConfirmUserResolver,
+                ForgotPasswordResolver,
+                LoginResolver,
+                LogoutResolver,
+                MeResolver,
+                RegisterResolver
+            ],
             authChecker: ({ context }) => {
                 return !!context.req.session.userId;
             }

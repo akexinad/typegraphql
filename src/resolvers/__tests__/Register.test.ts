@@ -1,4 +1,6 @@
+import faker from "faker";
 import { Connection } from "typeorm";
+import { User } from "../../entities/User";
 import { graphQLCall } from "../../test-utils/graphQLCall";
 import { testConnection } from "../../test-utils/testConnection";
 
@@ -8,9 +10,11 @@ beforeAll(async () => {
     connection = await testConnection(false);
 });
 
-afterAll(() => {
-    connection.close();
+afterAll(async () => {
+    await connection.close();
 });
+
+jest.mock("../../utils/sendEmail");
 
 const registerMutation = `
     mutation Register($data: RegisterInput!) {
@@ -24,20 +28,43 @@ const registerMutation = `
     }
 `;
 
+const {
+    name: { firstName, lastName },
+    internet: { email, password }
+} = faker;
+
 describe("Register Resolver", () => {
     it("creates a user", async () => {
-        const res = await graphQLCall({
+        const userToRegister = {
+            firstName: firstName(),
+            lastName: lastName(),
+            email: email(),
+            password: password()
+        };
+
+        const response = await graphQLCall({
             source: registerMutation,
             variableValues: {
-                data: {
-                    firstName: "federico",
-                    lastName: "fellini",
-                    email: "fellini@ex.it",
-                    password: "chicken"
+                data: userToRegister
+            }
+        }).then();
+
+        expect(response).toMatchObject({
+            data: {
+                register: {
+                    firstName: userToRegister.firstName,
+                    lastName: userToRegister.lastName,
+                    email: userToRegister.email
                 }
             }
         });
 
-        console.log(`res.`, res);
-    });
+        const dbUser = await User.findOne({
+            where: { email: userToRegister.email }
+        });
+
+        expect(dbUser).toBeDefined();
+        expect(dbUser!.firstName).toEqual(userToRegister.firstName);
+        expect(dbUser!.lastName).toEqual(userToRegister.lastName);
+    }, 8000);
 });
