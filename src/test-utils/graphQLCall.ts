@@ -15,7 +15,7 @@ let schema: GraphQLSchema;
 
 export const graphQLCall = async ({ source, variableValues }: Options) => {
     if (!schema) {
-        schema = await await buildSchema({
+        schema = await buildSchema({
             resolvers: [__dirname + "/../resolvers/*.ts"],
             authChecker: ({ context }) => {
                 return !!context.req.session.userId;
