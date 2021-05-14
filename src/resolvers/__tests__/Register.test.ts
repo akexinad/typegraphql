@@ -15,6 +15,21 @@ afterAll(async () => {
 });
 
 jest.mock("../../utils/sendEmail");
+jest.mock("../../utils/createConfirmationUrl");
+jest.mock("../../redis");
+// jest.mock("../../../node_modules/bcryptjs/index", () => ({
+//     hash: async (password: string) => {
+//         return new Promise((resolve, reject) => {
+//             if (!password) {
+//                 return reject({
+//                     error: "Please enter password"
+//                 });
+//             }
+
+//             return resolve(password);
+//         });
+//     }
+// }));
 
 const registerMutation = `
     mutation Register($data: RegisterInput!) {
@@ -47,7 +62,7 @@ describe("Register Resolver", () => {
             variableValues: {
                 data: userToRegister
             }
-        }).then();
+        });
 
         expect(response).toMatchObject({
             data: {
@@ -66,5 +81,5 @@ describe("Register Resolver", () => {
         expect(dbUser).toBeDefined();
         expect(dbUser!.firstName).toEqual(userToRegister.firstName);
         expect(dbUser!.lastName).toEqual(userToRegister.lastName);
-    }, 8000);
+    });
 });

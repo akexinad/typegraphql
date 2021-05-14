@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { getConnection } from "typeorm";
 import { User } from "../entities/User";
-import { createConfirmationEmail } from "../utils/createConfirmationUrl";
+import { createConfirmationUrl } from "../utils/createConfirmationUrl";
 import { sendEmail } from "../utils/sendEmail";
 import { RegisterInput } from "./resolverInputs/RegisterInput";
 
@@ -36,7 +36,7 @@ export class RegisterResolver {
 
             await sendEmail(
                 savedUser.email,
-                await createConfirmationEmail(savedUser.id.toString())
+                await createConfirmationUrl(savedUser.id.toString())
             );
 
             return savedUser;

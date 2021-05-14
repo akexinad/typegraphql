@@ -13,6 +13,7 @@ type Options = {
     variableValues?: Maybe<{
         [key: string]: any;
     }>;
+    userId?: number;
 };
 
 /**
@@ -20,7 +21,11 @@ type Options = {
  */
 let schema: GraphQLSchema;
 
-export const graphQLCall = async ({ source, variableValues }: Options) => {
+export const graphQLCall = async ({
+    source,
+    variableValues,
+    userId
+}: Options) => {
     if (!schema) {
         schema = await buildSchema({
             resolvers: [
@@ -41,6 +46,16 @@ export const graphQLCall = async ({ source, variableValues }: Options) => {
     return graphql({
         schema,
         source,
-        variableValues
+        variableValues,
+        contextValue: {
+            req: {
+                session: {
+                    userId
+                }
+            },
+            res: {
+                clearCookie: jest.fn()
+            }
+        }
     });
 };

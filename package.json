@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "db:setup": "ts-node src/test-utils/setup.ts",
-    "test": "npm run db:setup && jest --runInBand --detectOpenHandles --forceExit"
+    "test": "npm run db:setup && jest"
   },
   "keywords": [],
   "author": "",
